@@ -1,0 +1,12 @@
+logs
+logs/
+dags/__pycache__
+Python-3.10.9
+src/__pycache__
+fer_airflow
+src/models/__pycache__
+src/models/surebets/__pycache__
+src/models/surebets/chuntala/__pycache__
+src/models/surebets/betano/__pycache__
+.vscode
+.env
