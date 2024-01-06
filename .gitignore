@@ -10,3 +10,8 @@ src/models/surebets/chuntala/__pycache__
 src/models/surebets/betano/__pycache__
 .vscode
 .env
+src/surebets/__pycache__
+src/surebets/chuntala/__pycache__
+src/surebets/betano/__pycache__
+src/surebets/teapuesto/__pycache__
+src/execs

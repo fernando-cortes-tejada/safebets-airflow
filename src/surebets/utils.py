@@ -5,7 +5,7 @@ import pandas as pd
 import difflib
 import os
 
-from .entities import CHROMEDRIVER_PATH
+from src.surebets.entities import CHROMEDRIVER_PATH
 
 os.environ["webdriver.chrome.driver"] = CHROMEDRIVER_PATH
 

@@ -1,4 +1,4 @@
-CHROMEDRIVER_PATH = "src/execs/chromedriver_linux64/chromedriver"
+CHROMEDRIVER_PATH = "src/execs/chromedriver-linux64/chromedriver"
 LIST_JUGADORES = [
     "Jugadores",
     "Jugadores primer cuarto",
