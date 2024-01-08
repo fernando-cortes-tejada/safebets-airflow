@@ -1,50 +1,13 @@
 import time
-from datetime import datetime
 
 from .. import utils as sb_utils
 from . import utils as bt_utils
-from ...utils import send_message
 
 from .entities import INFO
 
 
-def scrape(**kwargs):
-    league = kwargs["league"]
-    category = kwargs["category"]
-    timeout = kwargs["timeout"]
-
-    # get the current datetime
-    dt_ini = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # initialize the flags for scraping
-    flag_betano = True
-    i = 0
-    while flag_betano:
-        try:
-            # call the scraping function
-            df_betano = scrape_(league, category, dt_ini, timeout)
-        except ValueError as e:
-            # inform if the scraping failed
-            send_message(f"Betano ({league.upper()}:{category}) failed")
-            print(str(e))
-        else:
-            if len(df_betano) > 0:
-                send_message(
-                    f"Betano ({league.upper()}:{category}) OK - {len(df_betano)} records"
-                )
-                flag_betano = False
-            if i > 0:
-                send_message(f"Betano ({league.upper()}:{category}) - 0 records")
-                flag_betano = False
-            i += 1
-    df_betano.to_csv(f"src/data/scraped_df/betano_{league}_{category}.csv", index=False)
-    print(
-        f'The file "src/data/scraped_df/betano_{league}_{category}.csv" was written with {len(df_betano)} records'
-    )
-
-
 # betano scraping function
-def scrape_(league: str, category: str, dt_ini: str, timeout: int):
+def scrape(league: str, category: str, dt_ini: str, timeout: int):
     # initialize the variables
     i = 0
 

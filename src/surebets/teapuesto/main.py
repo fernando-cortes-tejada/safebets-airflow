@@ -1,57 +1,12 @@
 import pandas as pd
-from datetime import datetime
 from src.surebets import utils as sb_utils
 from src.surebets.teapuesto import utils as ta_utils
-from src.utils import send_message
 
 from src.surebets.teapuesto.entities import INFO, NOT_PLAYERS
 
 
-def scrape(**kwargs) -> None:
-    league = kwargs["league"]
-    category = kwargs["category"]
-    timeout = kwargs["timeout"]
-
-    # get the current datetime
-    dt_ini = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # initialize the flags for scraping
-    flag_teapuesto = True
-    i = 0
-    while flag_teapuesto:
-        try:
-            # call the scraping function
-            df_teapuesto = scrape_(league, category, dt_ini, timeout)
-        except ValueError as e:
-            # inform if the scraping failed
-            send_message(f"Te Apuesto ({league.upper()}:{category}) failed")
-            print(str(e))
-        else:
-            try:
-                if len(df_teapuesto) > 0:
-                    send_message(
-                        f"Te Apuesto ({league.upper()}:{category}) OK - {len(df_teapuesto)} records"
-                    )
-                    flag_teapuesto = False
-                elif i > 0:
-                    send_message(
-                        f"Te Apuesto ({league.upper()}:{category}) - 0 records"
-                    )
-                    flag_teapuesto = False
-                df_teapuesto.to_csv(
-                    f"src/data/scraped_df/teapuesto_{league}_{category}.csv",
-                    index=False,
-                )
-                print(
-                    f'The file "src/data/scraped_df/teapuesto_{league}_{category}.csv" was written with {len(df_teapuesto)} records'
-                )
-            except ValueError as e:
-                print(str(e))
-            i += 1
-
-
 # teapuesto scraping function
-def scrape_(league: str, category: str, dt_ini: str, timeout: int) -> pd.DataFrame:
+def scrape(league: str, category: str, dt_ini: str, timeout: int) -> pd.DataFrame:
     # initialize the variables
     i = 0
     league = "nba"
@@ -76,8 +31,12 @@ def scrape_(league: str, category: str, dt_ini: str, timeout: int) -> pd.DataFra
 
         # prod = True means that the browser will be headless
         # we initialize the driver with time sleep of 10 seconds to wait for the page to load
+
+        url = "https://www.pinnacle.com/es/basketball/nba/matchups"
         driver = sb_utils.initiate_driver(prod=False)
         sb_utils.open_browser(driver, url, 10)
+
+        driver.quit()
 
         # we check if the time is over (to not overload the server)
         # if ta_utils.check_time(dt_ini, timeout, driver):

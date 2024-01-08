@@ -15,3 +15,6 @@ src/surebets/chuntala/__pycache__
 src/surebets/betano/__pycache__
 src/surebets/teapuesto/__pycache__
 src/execs
+src/surebets/pinnacle/__pycache__
+src/surebets/bet365/__pycache__
+src/data/scraped_df

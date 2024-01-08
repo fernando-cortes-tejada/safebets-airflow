@@ -4,8 +4,9 @@ import time
 import pandas as pd
 import difflib
 import os
+from datetime import datetime
 
-from src.surebets.entities import CHROMEDRIVER_PATH
+from src.surebets.entities import CHROMEDRIVER_PATH, DF_COLS
 
 os.environ["webdriver.chrome.driver"] = CHROMEDRIVER_PATH
 
@@ -41,6 +42,23 @@ def open_browser(driver: webdriver.Chrome, url: str, time_sleep: int):
     print("Browser opened")
 
 
+def check_time(t1: datetime, timeout: int, driver: webdriver.Chrome) -> bool:
+    t2 = datetime.now()
+    if (t2 - t1).seconds > timeout:
+        print("timeout")
+        driver.quit()
+        return True
+    else:
+        return False
+
+
+def return_info(info: list) -> pd.DataFrame:
+    if info:
+        return pd.DataFrame.from_dict(info)
+    else:
+        return pd.DataFrame(columns=DF_COLS)
+
+
 # check if the odds are a surebet
 def is_surebet(odd1: float, odd2: float) -> bool:
     """Returns True if the odds are a surebet"""
@@ -65,7 +83,9 @@ def alternate_names(flawed_series: pd.Series, real_series: pd.Series) -> pd.Seri
 
 
 # we merge the two dataframes and check for surebets
-def get_df_surebet(df_1: pd.DataFrame, df_2: pd.DataFrame) -> pd.DataFrame:
+def get_surebet(lst_1: list, lst_2: list) -> list:
+    df_1 = pd.DataFrame(lst_1)
+    df_2 = pd.DataFrame(lst_2)
     nombres_alt = alternate_names(df_1["player"], df_2["player"])
     df_1["player"] = df_1["player"].mask(nombres_alt.notnull(), nombres_alt)
 
@@ -74,7 +94,7 @@ def get_df_surebet(df_1: pd.DataFrame, df_2: pd.DataFrame) -> pd.DataFrame:
     df["surebet_1"] = df.apply(lambda x: is_surebet(x["more_x"], x["less_y"]), axis=1)
     df["surebet_2"] = df.apply(lambda x: is_surebet(x["less_x"], x["more_y"]), axis=1)
     df = df[df["surebet_1"] | df["surebet_2"]]
-    return df
+    return df.to_dict(orient="records")
 
 
 # calculate the profit of the surebet

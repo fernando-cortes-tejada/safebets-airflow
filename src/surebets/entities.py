@@ -106,4 +106,4 @@ DICT_NBA_TEAMS = {
     "UTA Jazz": "Utah Jazz",
     "WAS Wizards": "Washington Wizards",
 }
-DF_COLS = ["website", "market", "team", "player", "line", "more", "less"]
+DF_COLS = ["website", "game", "market", "team", "player", "line", "more", "less"]
