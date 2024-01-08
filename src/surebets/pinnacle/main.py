@@ -161,18 +161,26 @@ def scrape(league: str, category: str, timeout: int) -> pd.DataFrame:
                                     }
                                 ]
                     if carousel.text == "PLAYER PROPS":
+                        if string[1] == "Ocultar todo":
+                            del string[1]
                         market = string[0][string[0].find("(") :][1:-1]
                         player = string[0][: string[0].find("(") - 1]
-                        {
-                            "website": "pinnacle",
-                            "game": game_name,
-                            "market": market,
-                            "team": "",
-                            "player": player,
-                            "line": float(data_[0].split(" ")[-1]),
-                            "more": float(data_[1]),
-                            "less": float(data_[3]),
-                        }
+                        line = [
+                            float(s)
+                            for s in string[1].split()
+                            if s.replace(".", "").isdigit()
+                        ][0]
+                        info += [
+                            {
+                                "website": "pinnacle",
+                                "game": game_name,
+                                "market": market,
+                                "player": player,
+                                "line": line,
+                                "more": float(string[2]),
+                                "less": float(string[4]),
+                            }
+                        ]
 
         # {
         # "website": "pinnacle",
@@ -190,4 +198,6 @@ def scrape(league: str, category: str, timeout: int) -> pd.DataFrame:
         return sb_utils.return_info(info)
 
 
+t1 = datetime.now()
 info = scrape("", "", 100)
+(datetime.now() - t1).seconds
