@@ -131,6 +131,38 @@ def scrape(league: str, category: str, timeout: int) -> pd.DataFrame:
                             info += pi_utils.data_total_team(
                                 game_name, teams, market, string
                             )
+                        case "Línea de dinero – 1.er cuarto":
+                            market = "winner_first_quarter"
+                            info += pi_utils.data_winner(game_name, market, string)
+                        case "Hándicap – 1.er cuarto":
+                            market = "handicap_first_quarter"
+                            info += pi_utils.data_handicap(
+                                game_name, teams, market, string
+                            )
+                        case "Total – 1.er cuarto":
+                            market = "total_first_quarter"
+                            info += pi_utils.data_total(game_name, market, string)
+                        case "Total del equipo – 1.er cuarto":
+                            market = "total_team_first_quarter"
+                            info += pi_utils.data_total_team(
+                                game_name, teams, market, string
+                            )
+                        case "Línea de dinero – 2.º cuarto":
+                            market = "winner_second_quarter"
+                            info += pi_utils.data_winner(game_name, market, string)
+                        case "Hándicap – 2.º cuarto":
+                            market = "handicap_second_quarter"
+                            info += pi_utils.data_handicap(
+                                game_name, teams, market, string
+                            )
+                        case "Total – 2.º cuarto":
+                            market = "total_second_quarter"
+                            info += pi_utils.data_total(game_name, market, string)
+                        case "Total del equipo – 2.º cuarto":
+                            market = "total_team_second_quarter"
+                            info += pi_utils.data_total_team(
+                                game_name, teams, market, string
+                            )
 
                     if carousel.text == "PLAYER PROPS":
                         if string[1] == "Ocultar todo":
