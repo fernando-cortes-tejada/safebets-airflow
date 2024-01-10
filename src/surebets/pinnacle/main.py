@@ -123,6 +123,14 @@ def scrape(league: str, category: str, timeout: int) -> pd.DataFrame:
                             info += pi_utils.data_handicap(
                                 game_name, teams, market, string
                             )
+                        case "Total – 1.ª parte":
+                            market = "total_first_half"
+                            info += pi_utils.data_total(game_name, market, string)
+                        case "Total del equipo – 1.ª parte":
+                            market = "total_team_first_half"
+                            info += pi_utils.data_total_team(
+                                game_name, teams, market, string
+                            )
 
                     if carousel.text == "PLAYER PROPS":
                         if string[1] == "Ocultar todo":
