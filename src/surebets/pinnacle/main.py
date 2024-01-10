@@ -69,8 +69,6 @@ def scrape(league: str, category: str, timeout: int) -> pd.DataFrame:
 
             # we open the game
             driver.get(game)
-            # if pi_utils.check_live_game(driver):
-            # continue
 
             game_name = game.split("/")[-3]
             teams = game_name.split("vs")
@@ -102,85 +100,29 @@ def scrape(league: str, category: str, timeout: int) -> pd.DataFrame:
                     market = string[0]
                     match market:
                         case "Línea de dinero – Partido":
-                            market = "ganador"
-                            for i in range(2):
-                                data_ = string[2:][(i * 2) : (i * 2 + 2)]
-                                info += [
-                                    {
-                                        "website": "pinnacle",
-                                        "game": game_name,
-                                        "market": market,
-                                        "team": data_[0],
-                                        "more": data_[1],
-                                    }
-                                ]
+                            market = "winner"
+                            info += pi_utils.data_winner(game_name, market, string)
                         case "Hándicap – Partido":
                             market = "handicap"
-                            del string[0]
-                            for i in range(int((len(string) - 1) / 4)):
-                                data_ = string[(i * 4 + 1) : ((i + 1) * 4 + 1)]
-                                info += [
-                                    {
-                                        "website": "pinnacle",
-                                        "game": game_name,
-                                        "market": market,
-                                        "team": teams[0],
-                                        "line": float(data_[0]),
-                                        "more": float(data_[1]),
-                                        "less": float(data_[3]),
-                                    }
-                                ]
+                            info += pi_utils.data_handicap(
+                                game_name, teams, market, string
+                            )
                         case "Total – Partido":
                             market = "total"
-                            for i in range(int((len(string) - 1) / 4)):
-                                data_ = string[(i * 4 + 1) : ((i + 1) * 4 + 1)]
-                                info += [
-                                    {
-                                        "website": "pinnacle",
-                                        "game": game_name,
-                                        "market": market,
-                                        "line": float(data_[0].split(" ")[-1]),
-                                        "more": float(data_[1]),
-                                        "less": float(data_[3]),
-                                    }
-                                ]
+                            info += pi_utils.data_total(game_name, market, string)
                         case "Total del equipo – Partido":
-                            market = "total equipo"
-                            del string[0]
-                            for i in range(2):
-                                data_ = string[(i * 4 + 1) : ((i + 1) * 4 + 1)]
-                                info += [
-                                    {
-                                        "website": "pinnacle",
-                                        "game": game_name,
-                                        "market": market,
-                                        "team": teams[i],
-                                        "line": float(data_[0].split(" ")[-1]),
-                                        "more": float(data_[1]),
-                                        "less": float(data_[3]),
-                                    }
-                                ]
+                            market = "total_team"
+                            info += pi_utils.data_total_team(
+                                game_name, teams, market, string
+                            )
+                        case "Línea de dinero – 1.ª parte":
+                            market = "winner_first_half"
+                            info += pi_utils.data_winner(game_name, market, string)
+
                     if carousel.text == "PLAYER PROPS":
                         if string[1] == "Ocultar todo":
                             del string[1]
-                        market = string[0][string[0].find("(") :][1:-1]
-                        player = string[0][: string[0].find("(") - 1]
-                        line = [
-                            float(s)
-                            for s in string[1].split()
-                            if s.replace(".", "").isdigit()
-                        ][0]
-                        info += [
-                            {
-                                "website": "pinnacle",
-                                "game": game_name,
-                                "market": market,
-                                "player": player,
-                                "line": line,
-                                "more": float(string[2]),
-                                "less": float(string[4]),
-                            }
-                        ]
+                        info += pi_utils.data_players(game_name, market, string)
 
         # {
         # "website": "pinnacle",

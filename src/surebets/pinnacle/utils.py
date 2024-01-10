@@ -264,3 +264,91 @@ def get_plays_str(play, odd) -> str | None:
         string = None
         print("Chuntala: play string not found")
     return string
+
+
+def data_winner(game_name: str, market: str, string: list) -> list:
+    info = []
+    for i in range(2):
+        data_ = string[2:][(i * 2) : (i * 2 + 2)]
+        info += [
+            {
+                "website": "pinnacle",
+                "game": game_name,
+                "market": market,
+                "team": data_[0],
+                "more": data_[1],
+            }
+        ]
+    return info
+
+
+def data_handicap(game_name: str, teams: list, market: str, string: list) -> list:
+    info = []
+    for i in range(int((len(string) - 2) / 4)):
+        data_ = string[1:][(i * 4 + 1) : ((i + 1) * 4 + 1)]
+        info += [
+            {
+                "website": "pinnacle",
+                "game": game_name,
+                "market": market,
+                "team": teams[0],
+                "line": float(data_[0]),
+                "more": float(data_[1]),
+                "less": float(data_[3]),
+            }
+        ]
+    return info
+
+
+def data_total(game_name: str, market: str, string: list) -> list:
+    info = []
+    for i in range(int((len(string) - 1) / 4)):
+        data_ = string[(i * 4 + 1) : ((i + 1) * 4 + 1)]
+        info += [
+            {
+                "website": "pinnacle",
+                "game": game_name,
+                "market": market,
+                "line": float(data_[0].split(" ")[-1]),
+                "more": float(data_[1]),
+                "less": float(data_[3]),
+            }
+        ]
+    return info
+
+
+def data_total_team(game_name: str, teams: list, market: str, string: list) -> list:
+    info = []
+    for i in range(2):
+        data_ = string[1:][(i * 4 + 1) : ((i + 1) * 4 + 1)]
+        info += [
+            {
+                "website": "pinnacle",
+                "game": game_name,
+                "market": market,
+                "team": teams[i],
+                "line": float(data_[0].split(" ")[-1]),
+                "more": float(data_[1]),
+                "less": float(data_[3]),
+            }
+        ]
+    return info
+
+
+def data_players(game_name: str, market: str, string: list) -> list:
+    info = []
+    market = string[0][string[0].find("(") :][1:-1]
+    player = string[0][: string[0].find("(") - 1]
+    line = [float(s) for s in string[1].split() if s.replace(".", "").isdigit()][0]
+    info += [
+        {
+            "website": "pinnacle",
+            "game": game_name,
+            "market": market,
+            "player": player,
+            "line": line,
+            "more": float(string[2]),
+            "less": float(string[4]),
+        }
+    ]
+    return info
