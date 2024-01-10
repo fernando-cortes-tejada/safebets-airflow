@@ -118,6 +118,11 @@ def scrape(league: str, category: str, timeout: int) -> pd.DataFrame:
                         case "Línea de dinero – 1.ª parte":
                             market = "winner_first_half"
                             info += pi_utils.data_winner(game_name, market, string)
+                        case "Hándicap – 1.ª parte":
+                            market = "handicap_first_half"
+                            info += pi_utils.data_handicap(
+                                game_name, teams, market, string
+                            )
 
                     if carousel.text == "PLAYER PROPS":
                         if string[1] == "Ocultar todo":

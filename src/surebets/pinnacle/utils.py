@@ -268,8 +268,9 @@ def get_plays_str(play, odd) -> str | None:
 
 def data_winner(game_name: str, market: str, string: list) -> list:
     info = []
+    string = string[2:]
     for i in range(2):
-        data_ = string[2:][(i * 2) : (i * 2 + 2)]
+        data_ = string[(i * 2) : (i * 2 + 2)]
         info += [
             {
                 "website": "pinnacle",
@@ -284,8 +285,9 @@ def data_winner(game_name: str, market: str, string: list) -> list:
 
 def data_handicap(game_name: str, teams: list, market: str, string: list) -> list:
     info = []
-    for i in range(int((len(string) - 2) / 4)):
-        data_ = string[1:][(i * 4 + 1) : ((i + 1) * 4 + 1)]
+    string = string[2:]
+    for i in range(int(len(string) / 4)):
+        data_ = string[(i * 4) : ((i + 1) * 4)]
         info += [
             {
                 "website": "pinnacle",
@@ -302,8 +304,9 @@ def data_handicap(game_name: str, teams: list, market: str, string: list) -> lis
 
 def data_total(game_name: str, market: str, string: list) -> list:
     info = []
-    for i in range(int((len(string) - 1) / 4)):
-        data_ = string[(i * 4 + 1) : ((i + 1) * 4 + 1)]
+    string = string[1:]
+    for i in range(int(len(string) / 4)):
+        data_ = string[(i * 4) : ((i + 1) * 4)]
         info += [
             {
                 "website": "pinnacle",
@@ -319,8 +322,9 @@ def data_total(game_name: str, market: str, string: list) -> list:
 
 def data_total_team(game_name: str, teams: list, market: str, string: list) -> list:
     info = []
+    string = string[2:]
     for i in range(2):
-        data_ = string[1:][(i * 4 + 1) : ((i + 1) * 4 + 1)]
+        data_ = string[(i * 4) : ((i + 1) * 4)]
         info += [
             {
                 "website": "pinnacle",
