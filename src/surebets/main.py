@@ -13,17 +13,18 @@ from src.surebets.teapuesto.main import scrape as scrape_teapuesto
 # send a message to the telegram group when the DAG starts
 def trigger(**kwargs) -> str:
     league = kwargs["league"]
-    category = kwargs["category"]
-    website = kwargs["website"]
+    # category = kwargs["category"]
+    websites = kwargs["websites"]
     datetime_ = (datetime.now() - timedelta(hours=5)).strftime("%Y-%m-%d %H:%M:%S")
-    msg = f"Triggering {website.upper()}, {league.upper()}:{category} at {datetime_}"
+    # msg = f"Triggering {website.upper()}, {league.upper()}:{category} at {datetime_}"
+    msg = f"Triggering {', '.join(websites).upper()}, {league.upper()} at {datetime_}"
     return send_message(msg)
 
 
 # scraper
 def scrape(**kwargs) -> None:
     league = kwargs["league"]
-    category = kwargs["category"]
+    # category = kwargs["category"]
     timeout = kwargs["timeout"]
     website = kwargs["website"]
 
@@ -38,30 +39,30 @@ def scrape(**kwargs) -> None:
             # call the scraping function
             match website:
                 case "bet365":
-                    df = scrape_bet365(league, category, dt_ini, timeout)
+                    df = scrape_bet365(league, dt_ini, timeout)
                 case "betano":
-                    df = scrape_betano(league, category, dt_ini, timeout)
+                    df = scrape_betano(league, dt_ini, timeout)
                 case "chuntala":
-                    df = scrape_chuntala(league, category, dt_ini, timeout)
+                    df = scrape_chuntala(league, dt_ini, timeout)
                 case "pinnacle":
-                    df = scrape_pinnacle(league, category, dt_ini, timeout)
+                    df = scrape_pinnacle(league, timeout)
                 case "teapuesto":
-                    df = scrape_teapuesto(league, category, dt_ini, timeout)
+                    df = scrape_teapuesto(league, dt_ini, timeout)
         except ValueError as e:
             # inform if the scraping failed
-            send_message(f"{website.uppper()} ({league.upper()}:{category}) failed")
+            send_message(f"{website.upper()} ({league.upper()}) failed")
             print(str(e))
         else:
             try:
                 if len(df) > 0:
-                    msg = f"{website.upper()} ({league.upper()}:{category}) OK - {len(df)} records"
+                    msg = f"{website.upper()} ({league.upper()}) OK - {len(df)} records"
                     send_message(msg)
                     flag = False
                 elif i > 0:
-                    msg = f"{website.upper()} ({league.upper()}:{category}) - 0 records"
+                    msg = f"{website.upper()} ({league.upper()}) - 0 records"
                     send_message(msg)
                     flag = False
-                filename = f"src/data/scraped_df/{website}_{league}_{category}.csv"
+                filename = f"src/data/scraped_df/{website}_{league}.csv"
                 df.to_csv(filename, index=False)
             except ValueError as e:
                 print(str(e))
@@ -71,46 +72,46 @@ def scrape(**kwargs) -> None:
 # calculate the surebets and send a message to the telegram group if there is one
 def calculate(**kwargs) -> None:
     league = kwargs["league"]
-    category = kwargs["category"]
+    # category = kwargs["category"]
     websites = kwargs["websites"]
 
     lst = []
     for website in websites:
         # read the scraped data (it is a file that is going to be deleted after the calculation)
-        df = pd.read_csv(f"src/data/scraped_df/{website}_{league}_{category}.csv")
+        df = pd.read_csv(f"src/data/scraped_df/{website}_{league}.csv")
         lst.append(df.to_dict(orient="records"))
 
     # the number of scraped websites
-    n = len(lst)
+    # n = len(lst)
 
-    sb = []
+    # sb = []
     # calculate the surebets
-    for i in range(n - 1):
-        for j in range(i + 1, n):
-            sb += utils.get_surebet(lst[i], lst[j])
+    # for i in range(n - 1):
+    # for j in range(i + 1, n):
+    # sb += utils.get_surebet(lst[i], lst[j])
 
     # create a dataframe with the surebets
-    df = pd.DataFrame(sb)
+    # df = pd.DataFrame(sb)
 
     # send a message to the telegram group if there is a surebet
     if len(df) > 0:
-        df = utils.calculate_profit_df(df)
-        df = utils.generate_message(df)
-        for text in df["text"].values:
-            send_message(text)
-            send_message(text, chat_id="-906130924")
-            send_message(text, chat_id=794589367)
-            send_message(text, chat_id=5280791759)
+        send_message(f"Scraped {len(df)} records on pinnacle")
+        # df = utils.calculate_profit_df(df)
+        # df = utils.generate_message(df)
+        # for text in df["text"].values:
+        # send_message(text)
+        # send_message(text, chat_id="-906130924")
+        # send_message(text, chat_id=794589367)
+        # send_message(text, chat_id=5280791759)
     else:
-        send_message(f"No surebets ({league.upper()}:{category})")
+        send_message(f"No surebets ({league.upper()})")
 
 
 # delete the scraped data
 def clean(**kwargs) -> None:
     league = kwargs["league"]
-    category = kwargs["category"]
 
     # find the files and delete them
     for file in os.listdir("src/data/scraped_df"):
-        if file.endswith(f"{league}_{category}.csv"):
+        if file.endswith(f"{league}.csv"):
             os.remove(os.path.join("src/data/scraped_df", file))

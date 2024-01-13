@@ -7,7 +7,7 @@ from src.surebets.pinnacle.entities import INFO
 
 
 #  scraping function
-def scrape(league: str, category: str, timeout: int) -> pd.DataFrame:
+def scrape(league: str, timeout: int) -> pd.DataFrame:
     t1 = datetime.now()
 
     # initialize the variables
@@ -36,7 +36,7 @@ def scrape(league: str, category: str, timeout: int) -> pd.DataFrame:
         # we initialize the driver with time sleep of 10 seconds to wait for the page to load
 
         url = "https://www.pinnacle.com/es/basketball/nba/matchups"
-        driver = sb_utils.initiate_driver(prod=False)
+        driver = sb_utils.initiate_driver(prod=True)
         sb_utils.open_browser(driver, url, 0)
 
         # we check if the time is over (to not overload the server)
@@ -169,22 +169,6 @@ def scrape(league: str, category: str, timeout: int) -> pd.DataFrame:
                             del string[1]
                         info += pi_utils.data_players(game_name, market, string)
 
-        # {
-        # "website": "pinnacle",
-        # "game": game_name,
-        # "market": market,
-        # "team": "",
-        # "player": "",
-        # "line": float(data_[0].split(" ")[-1]),
-        # "more": float(data_[1]),
-        # "less": float(data_[3]),
-        # }
-
         # if the scraping was successful, we return the info and close the driver
         driver.quit()
         return sb_utils.return_info(info)
-
-
-t1 = datetime.now()
-info = scrape("", "", 100)
-(datetime.now() - t1).seconds
